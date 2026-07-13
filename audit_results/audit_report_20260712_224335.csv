@@ -1,0 +1,33 @@
+Target URL,Anchor Text,Classification,Status Code,Timing (ms),Destination Title,Flags,Suggested Fix
+https://overthewire.org/wargames/bandit/,OverTheWire (Jogo de Terminal Linux Bandit),OK,200,1431.08,,,Nenhum
+https://www.youtube.com/watch?v=680gbyZ1Usc,O que são Redes de Computadores e Portas?,OK,200,1492.36,,,Nenhum
+https://www.youtube.com/playlist?list=PL6L_m5S4uM2U_W3EuxgK_bOf1-fD6wP4O,Curso Completo de Redes para Segurança,OK,200,1508.23,,,Nenhum
+https://www.youtube.com/watch?v=Kz69A197770,Como funcionam os algoritmos de Hashing?,OK,200,1499.01,,,Nenhum
+https://www.youtube.com/@CrowSec,Fundamentos Básicos de Rede e Protocolos,OK,200,1534.28,,,Nenhum
+https://www.youtube.com/@CrowSec,Python para Hackers e Pentester,OK,200,1537.05,,,Nenhum
+https://tryhackme.com/,TryHackMe (Learn Pentest Python),OK,429,1636.54,,"BROKEN_4XX, RATE_LIMITED",Nenhum
+https://www.youtube.com/@diolinux,Linux e Shell Scripting na Prática,OK,200,1641.86,,,Nenhum
+https://www.youtube.com/@CrowSec,Ataques Web: SQL Injection passo a passo,OK,200,1630.54,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Construindo+scripts+ofensivos+em+Python,Construindo scripts ofensivos em Python,OK,200,1780.35,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+O+que+%C3%A9+OWASP+Top+10,O que é OWASP Top 10?,OK,200,1869.27,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Como+come%C3%A7ar+em+Pentest+de+forma+%C3%A9tica,Como começar em Pentest de forma ética?,OK,200,1853.98,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Criptografia+Entenda+Sim%C3%A9trica+vs+Assim%C3%A9trica,Criptografia: Entenda Simétrica vs Assimétrica,OK,200,1887.54,,,Nenhum
+https://www.youtube.com/@CrowSec,Nmap: Varredura de Portas e Serviços,OK,200,557.17,,,Nenhum
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+Curso+B%C3%A1sico+de+Linux+para+Ciberseguran%C3%A7a,Curso Básico de Linux para Cibersegurança,OK,200,2015.91,,,Nenhum
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+OWASP+Top+10+na+Pr%C3%A1tica+com+Demonstra%C3%A7%C3%B5es,OWASP Top 10 na Prática com Demonstrações,OK,200,2059.42,,,Nenhum
+https://www.hackthebox.com/,HackTheBox (Laboratórios práticos de invasão),OK,200,610.21,,,Nenhum
+https://www.netacad.com/,Acessar Cisco NetAcad,OK,200,1493.9,,,Nenhum
+https://desecsecurity.com/,Ver Treinamento Desec,REDIRECT,307,1641.94,,BROKEN_3XX,Atualizar link direto para o destino final (https://desecsecurity.com/)
+https://www.youtube.com/@canalguiaanonima,Acessar canal oficial,OK,200,1425.64,,,Nenhum
+https://www.hackthebox.com/,Acessar Hack The Box,OK,200,1158.16,,,Nenhum
+https://www.udemy.com/course/seguranca-web-e-aplicacoes-web-hacking/,Ver Curso Segurança Web,OK,403,1700.61,,"BROKEN_4XX, BOT_PROTECTED",Nenhum
+https://www.youtube.com/@CrowSec,Acessar canal oficial,OK,200,1506.21,,,Nenhum
+https://solyd.com.br/,Acessar SOLYD Security,OK,200,1797.45,,,Nenhum
+https://tryhackme.com/,Acessar TryHackMe,OK,429,1387.9,,"BROKEN_4XX, RATE_LIMITED",Nenhum
+https://www.youtube.com/@GabrielPato,Acessar canal oficial,OK,200,1625.1,,,Nenhum
+https://www.youtube.com/@_JohnHammond,Acessar canal oficial,OK,200,1492.89,,,Nenhum
+https://on.fiap.com.br/,Ver Nano Courses FIAP,OK,200,2066.4,,,Nenhum
+https://www.youtube.com/@Akitando,Acessar canal oficial,OK,200,1779.1,,,Nenhum
+https://www.coursera.org/professional-certificates/google-cybersecurity,Ver no Coursera,OK,200,2068.62,,,Nenhum
+https://www.escolavirtual.gov.br/,Acessar Portal EVG,OK,200,2360.67,,SUSPICIOUS_DOMAIN,Nenhum
+https://www.ev.org.br/,Ir para Escola Virtual Bradesco,OK,200,2391.39,,,Nenhum

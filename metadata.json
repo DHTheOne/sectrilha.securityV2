@@ -1,0 +1,6 @@
+{
+  "name": "Roadmap de Cibersegurança",
+  "description": "Um mapa mental interativo, simulador de vulnerabilidades e assistente IA para iniciantes aprenderem programação aplicada a cibersegurança.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

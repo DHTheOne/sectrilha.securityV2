@@ -1,0 +1,33 @@
+Target URL,Anchor Text,Classification,Status Code,Timing (ms),Destination Title,Flags,Suggested Fix
+https://www.youtube.com/playlist?list=PL6L_m5S4uM2U_W3EuxgK_bOf1-fD6wP4O,Curso Completo de Redes para Segurança,OK,200,1420.7,,,Nenhum
+https://www.youtube.com/watch?v=680gbyZ1Usc,O que são Redes de Computadores e Portas?,OK,200,1520.63,,,Nenhum
+https://www.youtube.com/watch?v=Kz69A197770,Como funcionam os algoritmos de Hashing?,OK,200,1502.94,,,Nenhum
+https://overthewire.org/wargames/bandit/,OverTheWire (Jogo de Terminal Linux Bandit),OK,200,1511.34,,,Nenhum
+https://www.youtube.com/@CrowSec,Ataques Web: SQL Injection passo a passo,OK,200,1685.56,,,Nenhum
+https://www.youtube.com/@CrowSec,Fundamentos Básicos de Rede e Protocolos,OK,200,1705.77,,,Nenhum
+https://www.youtube.com/@CrowSec,Python para Hackers e Pentester,OK,200,1734.59,,,Nenhum
+https://tryhackme.com/,TryHackMe (Learn Pentest Python),BROKEN,429,1833.32,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://www.youtube.com/results?search_query=Gabriel+Pato+Construindo+scripts+ofensivos+em+Python,Construindo scripts ofensivos em Python,OK,200,1839.04,,,Nenhum
+https://www.botaoseguro.com.br/,Ver Curso Botão Seguro,BROKEN,0,0.0,,DNS_ERROR,Substituir link quebrado ou remover da página
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+Curso+B%C3%A1sico+de+Linux+para+Ciberseguran%C3%A7a,Curso Básico de Linux para Cibersegurança,OK,200,1909.14,,,Nenhum
+https://www.youtube.com/@diolinux,Linux e Shell Scripting na Prática,OK,200,1922.59,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Criptografia+Entenda+Sim%C3%A9trica+vs+Assim%C3%A9trica,Criptografia: Entenda Simétrica vs Assimétrica,OK,200,1922.48,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Como+come%C3%A7ar+em+Pentest+de+forma+%C3%A9tica,Como começar em Pentest de forma ética?,OK,200,2173.97,,,Nenhum
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+OWASP+Top+10+na+Pr%C3%A1tica+com+Demonstra%C3%A7%C3%B5es,OWASP Top 10 na Prática com Demonstrações,OK,200,2192.95,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+O+que+%C3%A9+OWASP+Top+10,O que é OWASP Top 10?,OK,200,2206.17,,,Nenhum
+https://www.youtube.com/@CrowSec,Nmap: Varredura de Portas e Serviços,OK,200,636.4,,,Nenhum
+https://www.hackthebox.com/,HackTheBox (Laboratórios práticos de invasão),OK,200,806.2,,,Nenhum
+https://www.netacad.com/,Acessar Cisco NetAcad,OK,200,1313.88,,,Nenhum
+https://on.fiap.com.br/,Ver Nano Courses FIAP,OK,200,1113.77,,,Nenhum
+https://www.youtube.com/@GabrielPato,Acessar canal oficial,OK,200,1292.64,,,Nenhum
+https://solyd.com.br/,Acessar SOLYD Security,OK,200,1359.62,,,Nenhum
+https://desecsecurity.com/,Ver Treinamento Desec,REDIRECT,307,1479.19,,BROKEN_3XX,Atualizar link direto para o destino final (https://desecsecurity.com/)
+https://www.hackthebox.com/,Acessar Hack The Box,OK,200,1026.78,,,Nenhum
+https://www.youtube.com/@guiaanonima,Acessar canal oficial,BROKEN,404,1377.8,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://www.youtube.com/@CrowSec,Acessar canal oficial,OK,200,1385.22,,,Nenhum
+https://www.youtube.com/@JohnHammond,Acessar canal oficial,BROKEN,404,1125.46,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://tryhackme.com/,Acessar TryHackMe,BROKEN,429,1174.8,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://www.youtube.com/@Akitando,Acessar canal oficial,OK,200,1328.14,,,Nenhum
+https://www.ev.org.br/,Ir para Escola Virtual Bradesco,OK,200,2083.0,,,Nenhum
+https://www.coursera.org/professional-certificates/google-cybersecurity,Ver no Coursera,OK,200,1843.07,,,Nenhum
+https://www.escolavirtual.gov.br/,Acessar Portal EVG,OK,200,2128.71,,SUSPICIOUS_DOMAIN,Nenhum

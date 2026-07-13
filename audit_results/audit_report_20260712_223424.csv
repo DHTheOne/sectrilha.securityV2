@@ -1,0 +1,33 @@
+Target URL,Anchor Text,Classification,Status Code,Timing (ms),Destination Title,Flags,Suggested Fix
+https://www.youtube.com/playlist?list=PL6L_m5S4uM2U_W3EuxgK_bOf1-fD6wP4O,Curso Completo de Redes para Segurança,OK,200,1282.43,,,Nenhum
+https://www.youtube.com/watch?v=Kz69A197770,Como funcionam os algoritmos de Hashing?,OK,200,1349.77,,,Nenhum
+https://overthewire.org/wargames/bandit/,OverTheWire (Jogo de Terminal Linux Bandit),OK,200,1367.46,,,Nenhum
+https://www.youtube.com/watch?v=680gbyZ1Usc,O que são Redes de Computadores e Portas?,OK,200,1502.66,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Criptografia+Entenda+Sim%C3%A9trica+vs+Assim%C3%A9trica,Criptografia: Entenda Simétrica vs Assimétrica,OK,200,1558.2,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+Construindo+scripts+ofensivos+em+Python,Construindo scripts ofensivos em Python,OK,200,1759.52,,,Nenhum
+https://www.youtube.com/@CrowSec,Python para Hackers e Pentester,OK,200,1774.41,,,Nenhum
+https://www.youtube.com/@CrowSec,Ataques Web: SQL Injection passo a passo,OK,200,1834.39,,,Nenhum
+https://www.youtube.com/@CrowSec,Fundamentos Básicos de Rede e Protocolos,OK,200,1868.32,,,Nenhum
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+Curso+B%C3%A1sico+de+Linux+para+Ciberseguran%C3%A7a,Curso Básico de Linux para Cibersegurança,OK,200,1879.28,,,Nenhum
+https://www.youtube.com/@diolinux,Linux e Shell Scripting na Prática,OK,200,2067.41,,,Nenhum
+https://www.youtube.com/@CrowSec,Nmap: Varredura de Portas e Serviços,OK,200,875.42,,,Nenhum
+https://www.youtube.com/results?search_query=Gabriel+Pato+O+que+%C3%A9+OWASP+Top+10,O que é OWASP Top 10?,OK,200,2161.28,,,Nenhum
+https://tryhackme.com/,TryHackMe (Learn Pentest Python),BROKEN,429,2265.01,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://www.youtube.com/results?search_query=Gabriel+Pato+Como+come%C3%A7ar+em+Pentest+de+forma+%C3%A9tica,Como começar em Pentest de forma ética?,OK,200,2253.82,,,Nenhum
+https://www.youtube.com/results?search_query=Guia+An%C3%B4nima+OWASP+Top+10+na+Pr%C3%A1tica+com+Demonstra%C3%A7%C3%B5es,OWASP Top 10 na Prática com Demonstrações,OK,200,2261.16,,,Nenhum
+https://www.hackthebox.com/,HackTheBox (Laboratórios práticos de invasão),OK,200,1098.13,,,Nenhum
+https://www.netacad.com/,Acessar Cisco NetAcad,OK,200,1310.32,,,Nenhum
+https://on.fiap.com.br/,Ver Nano Courses FIAP,OK,200,1492.57,,,Nenhum
+https://solyd.com.br/,Acessar SOLYD Security,OK,200,1300.28,,,Nenhum
+https://www.youtube.com/@GabrielPato,Acessar canal oficial,OK,200,1183.69,,,Nenhum
+https://www.youtube.com/@canalguiaanonima,Acessar canal oficial,OK,200,1176.51,,,Nenhum
+https://www.youtube.com/@CrowSec,Acessar canal oficial,OK,200,1216.71,,,Nenhum
+https://www.hackthebox.com/,Acessar Hack The Box,OK,200,985.36,,,Nenhum
+https://www.udemy.com/course/seguranca-web-e-aplicacoes-web-hacking/,Ver Curso Segurança Web,BROKEN,403,1589.55,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://desecsecurity.com/,Ver Treinamento Desec,REDIRECT,307,1677.89,,BROKEN_3XX,Atualizar link direto para o destino final (https://desecsecurity.com/)
+https://tryhackme.com/,Acessar TryHackMe,BROKEN,429,1141.59,,BROKEN_4XX,Substituir link quebrado ou remover da página
+https://www.ev.org.br/,Ir para Escola Virtual Bradesco,OK,200,1966.64,,,Nenhum
+https://www.youtube.com/@Akitando,Acessar canal oficial,OK,200,1325.63,,,Nenhum
+https://www.youtube.com/@_JohnHammond,Acessar canal oficial,OK,200,1272.01,,,Nenhum
+https://www.coursera.org/professional-certificates/google-cybersecurity,Ver no Coursera,OK,200,1980.6,,,Nenhum
+https://www.escolavirtual.gov.br/,Acessar Portal EVG,OK,200,2199.8,,SUSPICIOUS_DOMAIN,Nenhum

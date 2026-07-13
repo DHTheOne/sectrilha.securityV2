@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function hasValidProgress(data) {
+      return data.completedNodes is list
+        && data.completedNodes.size() <= 6
+        && data.completedNodes.hasOnly([
+          'net-basics', 'linux-bash', 'python-sec',
+          'cryptography', 'owasp-web', 'pentest'
+        ])
+        && data.studyDates is list
+        && data.studyDates.size() <= 3660
+        && data.longestStreak is int
+        && data.longestStreak >= 0
+        && data.longestStreak <= 3660
+        && data.updatedAt is string;
+    }
+
+    match /users/{userId} {
+      // The app fetches one known document; collection listing is not needed.
+      allow get: if isOwner(userId);
+      allow list, delete: if false;
+
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasAll([
+          'completedNodes', 'studyDates', 'longestStreak', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'completedNodes', 'studyDates', 'longestStreak', 'updatedAt'
+        ])
+        && hasValidProgress(request.resource.data);
+
+      // Existing documents may contain legacy profile fields, but browser clients
+      // can change only the four progress fields from now on.
+      allow update: if isOwner(userId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'completedNodes', 'studyDates', 'longestStreak', 'updatedAt'
+        ])
+        && hasValidProgress(request.resource.data);
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
