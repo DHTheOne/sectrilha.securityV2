@@ -1,0 +1,698 @@
+// SecAcademy curriculum and learning-progress data model.
+// Content strings are stored as locale-keyed JSON objects, for example:
+// { "pt-BR": "Fundamentos", "en-US": "Fundamentals", "es-ES": "Fundamentos" }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Locale {
+  PT_BR
+  EN_US
+  ES_ES
+}
+
+enum PublicationStatus {
+  DRAFT
+  REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ModuleType {
+  LESSON
+  LAB
+  PROJECT
+  ASSESSMENT
+  CAPSTONE
+}
+
+enum ResourceType {
+  COURSE
+  BOOK
+  VIDEO
+  LAB
+  ARTICLE
+  DOCUMENTATION
+  TOOL
+  CTF
+  PODCAST
+}
+
+enum ResourceAccess {
+  FREE
+  PAID
+  FREEMIUM
+  SUBSCRIPTION
+}
+
+enum CheckpointType {
+  KNOWLEDGE
+  PRACTICAL_LAB
+  PROJECT
+  QUIZ
+  REFLECTION
+  EXTERNAL_VERIFICATION
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum ProgressSource {
+  LOCAL
+  MANUAL
+  IMPORT
+}
+
+enum SkillProficiency {
+  AWARENESS
+  FOUNDATION
+  WORKING
+  ADVANCED
+  EXPERT
+}
+
+enum CertificationType {
+  CERTIFICATE
+  CERTIFICATION
+  PROFESSIONAL_CERTIFICATION
+  DEGREE
+}
+
+enum CertificationRecognition {
+  FOUNDATIONAL
+  INDUSTRY_RECOGNIZED
+  ADVANCED
+  ELITE
+}
+
+enum StudyPlanStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum StudyPlanItemStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  SKIPPED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum CredentialStatus {
+  CLAIMED
+  VERIFIED
+  EXPIRED
+  REVOKED
+}
+
+enum ConsentType {
+  ESSENTIAL
+}
+
+enum ConsentSource {
+  WEB
+  IMPORT
+  API
+  ADMIN
+}
+
+enum DataRequestStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+enum DataExportFormat {
+  JSON
+  CSV
+}
+
+enum PrerequisiteSubjectType {
+  MODULE
+  CERTIFICATION
+  SPECIALIZATION
+}
+
+enum PrerequisiteRequirementType {
+  LEVEL
+  MODULE
+  CHECKPOINT
+  CERTIFICATION
+  SPECIALIZATION
+  SKILL
+}
+
+/// A future first-party account. The public MVP does not create user accounts
+/// or send checkpoint progress to this database.
+model User {
+  id          String   @id @default(cuid())
+  email       String?  @unique
+  displayName String?
+  avatarUrl   String?
+  locale      Locale   @default(PT_BR)
+  timeZone    String   @default("America/Sao_Paulo")
+  deletedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  learningProfile      UserLearningProfile?
+  levelProgress        UserLevelProgress[]
+  moduleProgress       UserModuleProgress[]
+  checkpointProgress   UserCheckpoint[]
+  studyPlans           StudyPlan[]
+  credentials          UserCredential[]
+  consentRecords       ConsentRecord[]
+  dataExportRequests   DataExportRequest[]
+  dataDeletionRequests DataDeletionRequest[]
+
+  @@index([deletedAt])
+}
+
+/// Learner preferences and goals used by the recommendation engine.
+model UserLearningProfile {
+  id                         String   @id @default(cuid())
+  userId                     String   @unique
+  weeklyAvailabilityMinutes  Int?
+  currentLevelId             String?
+  targetCertificationId      String?
+  targetSpecializationId     String?
+  onboardingCompletedAt      DateTime?
+  goals                      Json?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  user                 User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentLevel         Level?          @relation("CurrentLevel", fields: [currentLevelId], references: [id], onDelete: SetNull)
+  targetCertification  Certification?  @relation("TargetCertification", fields: [targetCertificationId], references: [id], onDelete: SetNull)
+  targetSpecialization Specialization? @relation("TargetSpecialization", fields: [targetSpecializationId], references: [id], onDelete: SetNull)
+
+  @@index([currentLevelId])
+  @@index([targetCertificationId])
+  @@index([targetSpecializationId])
+}
+
+model Level {
+  id                String            @id @default(cuid())
+  curriculumVersion String            @default("2026")
+  number            Int
+  slug              String            @unique
+  titleI18n         Json
+  descriptionI18n   Json
+  outcomesI18n      Json?
+  estimatedHours    Int?
+  position          Int
+  status            PublicationStatus @default(DRAFT)
+  seoTitleI18n      Json?
+  seoDescriptionI18n Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  modules              Module[]
+  specializationLevels SpecializationLevel[]
+  specializationSkills SpecializationSkill[]
+  progressRecords      UserLevelProgress[]
+  currentForProfiles   UserLearningProfile[] @relation("CurrentLevel")
+
+  @@unique([curriculumVersion, number])
+  @@index([status, position])
+}
+
+model Module {
+  id                 String            @id @default(cuid())
+  levelId            String
+  slug               String            @unique
+  code               String?           @unique
+  titleI18n          Json
+  descriptionI18n    Json
+  objectivesI18n     Json?
+  type               ModuleType        @default(LESSON)
+  estimatedMinutes   Int?
+  position           Int
+  isRequired         Boolean           @default(true)
+  status             PublicationStatus @default(DRAFT)
+  seoTitleI18n       Json?
+  seoDescriptionI18n Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  level                     Level                            @relation(fields: [levelId], references: [id], onDelete: Restrict)
+  resourceLinks             ModuleResource[]
+  checkpoints               Checkpoint[]
+  specializationLinks       SpecializationModule[]
+  skillLinks                ModuleSkill[]
+  certificationRequirements CertificationModuleRequirement[]
+  progressRecords           UserModuleProgress[]
+  studyPlanItems            StudyPlanItem[]
+
+  @@unique([levelId, position])
+  @@index([levelId, status])
+}
+
+model Resource {
+  id                 String            @id @default(cuid())
+  slug               String            @unique
+  titleI18n          Json
+  descriptionI18n    Json?
+  provider           String
+  url                String
+  type               ResourceType
+  access             ResourceAccess
+  languages          String[]          @default([])
+  costCents          Int?
+  currency           String?
+  estimatedMinutes   Int?
+  imageUrl           String?
+  metadata           Json?
+  pricingUpdatedAt   DateTime?
+  status             PublicationStatus @default(DRAFT)
+  seoTitleI18n       Json?
+  seoDescriptionI18n Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  moduleLinks   ModuleResource[]
+  studyPlanItems StudyPlanItem[]
+
+  @@index([status, type, access])
+  @@index([provider])
+}
+
+/// Curated placement of a resource within a module.
+model ModuleResource {
+  moduleId   String
+  resourceId String
+  position   Int     @default(0)
+  isRequired Boolean @default(false)
+  noteI18n   Json?
+
+  module   Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+
+  @@id([moduleId, resourceId])
+  @@index([resourceId])
+}
+
+model Checkpoint {
+  id                 String         @id @default(cuid())
+  moduleId           String
+  slug               String         @unique
+  titleI18n          Json
+  descriptionI18n    Json?
+  type               CheckpointType
+  isRequired         Boolean        @default(true)
+  position           Int
+  estimatedMinutes   Int?
+  verificationSchema Json?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  module        Module            @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  progress      UserCheckpoint[]
+  studyPlanItems StudyPlanItem[]
+
+  @@unique([moduleId, position])
+  @@index([moduleId, isRequired])
+}
+
+model Specialization {
+  id                 String            @id @default(cuid())
+  slug               String            @unique
+  titleI18n          Json
+  descriptionI18n    Json
+  icon               String?
+  status             PublicationStatus @default(DRAFT)
+  seoTitleI18n       Json?
+  seoDescriptionI18n Json?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  levels             SpecializationLevel[]
+  modules            SpecializationModule[]
+  skillTargets       SpecializationSkill[]
+  certificationLinks CertificationSpecialization[]
+  targetForProfiles  UserLearningProfile[] @relation("TargetSpecialization")
+
+  @@index([status])
+}
+
+/// Indicates which curriculum levels are part of a specialization.
+model SpecializationLevel {
+  specializationId String
+  levelId          String
+  position         Int     @default(0)
+  isEntryPoint     Boolean @default(false)
+
+  specialization Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
+  level          Level          @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@id([specializationId, levelId])
+  @@index([levelId])
+}
+
+/// Indicates which modules are recommended or required by a specialization.
+model SpecializationModule {
+  specializationId String
+  moduleId         String
+  position         Int     @default(0)
+  isRequired       Boolean @default(true)
+
+  specialization Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
+  module         Module         @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([specializationId, moduleId])
+  @@index([moduleId])
+}
+
+model Skill {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  nameI18n        Json
+  descriptionI18n Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  moduleLinks          ModuleSkill[]
+  specializationTargets SpecializationSkill[]
+}
+
+/// A proficiency target for a skill at a given level within a specialization.
+model SpecializationSkill {
+  specializationId      String
+  skillId               String
+  levelId               String
+  targetProficiency     SkillProficiency
+
+  specialization Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
+  skill          Skill          @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  level          Level          @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@id([specializationId, skillId, levelId])
+  @@index([skillId, levelId])
+}
+
+/// The outcome a module contributes toward in the specialization skill matrix.
+model ModuleSkill {
+  moduleId       String
+  skillId        String
+  proficiency    SkillProficiency
+
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  skill  Skill  @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([moduleId, skillId])
+  @@index([skillId])
+}
+
+model Certification {
+  id                 String                   @id @default(cuid())
+  slug               String                   @unique
+  issuer             String
+  titleI18n          Json
+  descriptionI18n    Json?
+  officialUrl        String?
+  type               CertificationType        @default(CERTIFICATION)
+  recognition        CertificationRecognition @default(INDUSTRY_RECOGNIZED)
+  costCents          Int?
+  currency           String?
+  estimatedHours     Int?
+  validityMonths     Int?
+  requiresProctoring Boolean                  @default(false)
+  metadata           Json?
+  pricingUpdatedAt   DateTime?
+  status             PublicationStatus        @default(DRAFT)
+  seoTitleI18n       Json?
+  seoDescriptionI18n Json?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  moduleRequirements CertificationModuleRequirement[]
+  specializationLinks CertificationSpecialization[]
+  userCredentials     UserCredential[]
+  targetForProfiles   UserLearningProfile[] @relation("TargetCertification")
+
+  @@index([status, recognition])
+  @@index([issuer])
+}
+
+/// Module completion requirements used by certification gap analysis.
+model CertificationModuleRequirement {
+  certificationId          String
+  moduleId                 String
+  minimumCompletionPercent Int     @default(100)
+  isRequired               Boolean @default(true)
+  weight                   Int     @default(1)
+
+  certification Certification @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  module        Module        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([certificationId, moduleId])
+  @@index([moduleId])
+}
+
+model CertificationSpecialization {
+  certificationId   String
+  specializationId  String
+  isRecommended     Boolean @default(true)
+  position          Int     @default(0)
+
+  certification  Certification  @relation(fields: [certificationId], references: [id], onDelete: Cascade)
+  specialization Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
+
+  @@id([certificationId, specializationId])
+  @@index([specializationId])
+}
+
+/// Generic prerequisite graph for content entities. The service layer validates
+/// that IDs match their declared types before publishing curriculum content.
+model Prerequisite {
+  id                       String                       @id @default(cuid())
+  subjectType              PrerequisiteSubjectType
+  subjectId                String
+  requirementType          PrerequisiteRequirementType
+  requirementId            String
+  minimumCompletionPercent Int?
+  isRequired               Boolean                      @default(true)
+  position                 Int                          @default(0)
+  rationaleI18n            Json?
+  createdAt                DateTime                     @default(now())
+
+  @@unique([subjectType, subjectId, requirementType, requirementId])
+  @@index([subjectType, subjectId])
+  @@index([requirementType, requirementId])
+}
+
+/// Cached level completion for fast cards and roadmap rendering. It is derived
+/// from module and checkpoint rows, never the only source of completion truth.
+model UserLevelProgress {
+  id                    String         @id @default(cuid())
+  userId                String
+  levelId               String
+  status                ProgressStatus @default(NOT_STARTED)
+  completionPercent     Int            @default(0)
+  startedAt             DateTime?
+  completedAt           DateTime?
+  lastActivityAt        DateTime?
+  clientUpdatedAt       DateTime?
+  syncedAt              DateTime?
+  syncVersion           Int            @default(0)
+  source                ProgressSource @default(LOCAL)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level Level @relation(fields: [levelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, levelId])
+  @@index([levelId, status])
+  @@index([userId, status])
+}
+
+model UserModuleProgress {
+  id                    String         @id @default(cuid())
+  userId                String
+  moduleId              String
+  status                ProgressStatus @default(NOT_STARTED)
+  completionPercent     Int            @default(0)
+  timeSpentMinutes      Int            @default(0)
+  startedAt             DateTime?
+  completedAt           DateTime?
+  lastActivityAt        DateTime?
+  clientUpdatedAt       DateTime?
+  syncedAt              DateTime?
+  syncVersion           Int            @default(0)
+  source                ProgressSource @default(LOCAL)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+  @@index([moduleId, status])
+  @@index([userId, status])
+}
+
+/// Per-checkpoint state, including the client timestamp needed for offline sync.
+model UserCheckpoint {
+  id              String         @id @default(cuid())
+  userId          String
+  checkpointId    String
+  status          ProgressStatus @default(NOT_STARTED)
+  evidence        Json?
+  completedAt     DateTime?
+  clientUpdatedAt DateTime?
+  syncedAt        DateTime?
+  syncVersion     Int            @default(0)
+  source          ProgressSource @default(LOCAL)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checkpoint Checkpoint @relation(fields: [checkpointId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, checkpointId])
+  @@index([checkpointId, status])
+  @@index([userId, status])
+}
+
+model StudyPlan {
+  id                         String          @id @default(cuid())
+  userId                     String
+  title                      String
+  weekStartsOn               DateTime
+  timeZone                   String
+  availableMinutesPerWeek    Int?
+  status                     StudyPlanStatus @default(DRAFT)
+  createdFromRecommendation  Boolean         @default(false)
+  createdAt                  DateTime        @default(now())
+  updatedAt                  DateTime        @updatedAt
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items StudyPlanItem[]
+
+  @@index([userId, status, weekStartsOn])
+}
+
+/// A drag-and-drop schedule entry. A module is mandatory; resource/checkpoint
+/// fields optionally narrow the planned work within that module.
+model StudyPlanItem {
+  id                      String              @id @default(cuid())
+  studyPlanId             String
+  moduleId                String
+  resourceId              String?
+  checkpointId            String?
+  dayOfWeek               DayOfWeek
+  position                Int                 @default(0)
+  scheduledFor            DateTime?
+  durationMinutes         Int
+  status                  StudyPlanItemStatus @default(PLANNED)
+  completedAt             DateTime?
+  note                    String?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  studyPlan  StudyPlan   @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
+  module     Module      @relation(fields: [moduleId], references: [id], onDelete: Restrict)
+  resource   Resource?   @relation(fields: [resourceId], references: [id], onDelete: SetNull)
+  checkpoint Checkpoint? @relation(fields: [checkpointId], references: [id], onDelete: SetNull)
+
+  @@index([studyPlanId, dayOfWeek, position])
+  @@index([moduleId])
+}
+
+/// A certification manually recorded by the learner.
+model UserCredential {
+  id              String           @id @default(cuid())
+  userId          String
+  certificationId String
+  credentialUrl   String?
+  status          CredentialStatus @default(CLAIMED)
+  issuedAt        DateTime?
+  expiresAt       DateTime?
+  verifiedAt      DateTime?
+  metadata        Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  certification Certification @relation(fields: [certificationId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, certificationId])
+  @@index([certificationId, status])
+}
+
+/// Append-only record of privacy choices, retaining the policy version accepted.
+model ConsentRecord {
+  id              String        @id @default(cuid())
+  userId          String
+  type            ConsentType
+  policyVersion   String
+  granted         Boolean
+  source          ConsentSource @default(WEB)
+  capturedAt      DateTime      @default(now())
+  revokedAt       DateTime?
+  ipHash          String?
+  userAgentHash   String?
+  evidence        Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, capturedAt])
+}
+
+model DataExportRequest {
+  id                 String            @id @default(cuid())
+  userId             String
+  format             DataExportFormat  @default(JSON)
+  status             DataRequestStatus @default(PENDING)
+  requestedAt        DateTime          @default(now())
+  startedAt          DateTime?
+  completedAt        DateTime?
+  expiresAt          DateTime?
+  artifactStorageKey String?
+  checksumSha256     String?
+  errorCode          String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, requestedAt])
+}
+
+/// Supports LGPD/GDPR deletion requests. Fulfilment should anonymize the User
+/// record before a hard delete is considered.
+model DataDeletionRequest {
+  id                    String            @id @default(cuid())
+  userId                String
+  status                DataRequestStatus @default(PENDING)
+  requestedAt           DateTime          @default(now())
+  scheduledFor          DateTime?
+  completedAt           DateTime?
+  verificationTokenHash String?
+  errorCode             String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, requestedAt])
+}
