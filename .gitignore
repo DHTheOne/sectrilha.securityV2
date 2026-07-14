@@ -1,8 +1,19 @@
 node_modules/
 dist/
+.next/
+.playwright/
+.test-results/
+test-results/
+playwright-report/
+*.tsbuildinfo
 .env
 .env.*
 !.env.example
 server.js
 npm-debug.log*
 .DS_Store
+
+# Standalone link-audit tool and its generated reports (not part of the Next app)
+audit_tool.py
+audit_results/
+audit_results.md

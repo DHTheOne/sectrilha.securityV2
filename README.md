@@ -1,24 +1,41 @@
-# SecAcademy — Jornada de Cibersegurança
+# SecTrilha — Jornada de Cibersegurança
 
-Aplicação educacional em React com trilhas de estudo, simuladores conceituais seguros, progresso sincronizado pelo Firebase e mentor IA.
+Plataforma educacional de cibersegurança com currículo estruturado, recursos curados e checkpoints offline-first.
+
+## Privacidade por padrão
+
+O MVP não tem cadastro, autenticação, IA, chat automático, analytics, pixels de publicidade ou sincronização com serviços externos. O progresso é salvo somente no navegador do estudante, via IndexedDB, e pode ser exportado ou apagado em `/privacy`.
+
+Os recursos externos são links de saída abertos apenas após uma ação explícita da pessoa usuária. Eles não são incorporados em iframes e usam `rel="noreferrer"`.
+
+## Páginas do currículo
+
+- `/curriculum` — visão geral, árvore de aprendizagem e próxima ação;
+- `/curriculum/level-0` a `/curriculum/level-5` — níveis e checkpoints;
+- `/curriculum/specializations/red-team` (e demais especializações);
+- `/certifications/oscp` e `/resources/portswigger-academy` — páginas estáticas com dados estruturados;
+- `/privacy` — exportação e exclusão do progresso local.
+
+As páginas são geradas estaticamente e revalidadas diariamente. O catálogo, inclusive os materiais em português, fica em `src/lib/curriculum/catalog.ts`.
+
+O schema PostgreSQL para uma futura versão com contas próprias está em `prisma/schema.prisma`. Ele não é usado para rastrear estudantes no MVP.
 
 ## Executar localmente
 
 Pré-requisito: Node.js 20 ou superior.
 
 1. Instale as dependências: `npm install`.
-2. Copie `.env.example` para `.env.local`.
-3. Defina `GEMINI_API_KEY` em `.env.local`. Essa chave fica somente no servidor; nunca a coloque em `firebase-applet-config.json` nem a envie ao repositório.
-4. Inicie a aplicação: `npm run dev`.
+2. Opcionalmente, copie `.env.example` para `.env.local` e defina `NEXT_PUBLIC_SITE_URL`.
+3. Inicie a aplicação: `npm run dev`.
+4. Abra `http://localhost:3000` no navegador.
 
-O servidor usa a porta `3000` por padrão. Defina `PORT` em `.env.local` para usar outra porta.
+## Verificações
 
-## Firebase e dados de progresso
+- `npm run lint` — checagem de TypeScript;
+- `npm run test` — testes do catálogo;
+- `npm run build` — geração das páginas estáticas;
+- `npm run test:e2e` — navegação principal;
+- `npm run check:links` — valida links externos do catálogo, seguindo redirecionamentos;
+- `npm run prisma:validate` — valida o schema Prisma.
 
-O arquivo `firebase-applet-config.json` contém identificadores públicos do cliente Firebase. Antes de publicar, aplique `firestore.rules` no banco Firestore configurado nesse projeto. As regras restringem cada pessoa autenticada ao próprio documento `users/{uid}` e permitem apenas os campos de progresso.
-
-As regras são entregues como arquivo para revisão; este repositório não executa uma publicação automática no Firebase.
-
-## Segurança do mentor IA
-
-O endpoint `/api/gemini` mantém a chave e as instruções do mentor no servidor. Ele limita tamanho de pergunta e taxa por IP, mas uma implantação pública deve usar também limite de gasto/quotas no provedor e proteção de borda apropriada.
+Links externos podem mudar ou exigir login/região. Rode `npm run check:links` antes de uma publicação para confirmar os destinos novamente.
