@@ -25,6 +25,29 @@ async function request(url: string, method: 'HEAD' | 'GET') {
   }
 }
 
+function isYouTubeUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    return host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtu.be';
+  } catch {
+    return false;
+  }
+}
+
+// YouTube answers 200 for removed/private videos and playlists, so the plain
+// HEAD/GET check cannot detect them. The oEmbed endpoint returns a non-200
+// status when the content is deleted, private or region-blocked.
+async function youTubeIsAvailable(url: string): Promise<boolean> {
+  const endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+  try {
+    const response = await request(endpoint, 'GET');
+    return response.ok;
+  } catch {
+    // A transient oEmbed failure should not fail the whole run on its own.
+    return true;
+  }
+}
+
 async function checkLink(link: LinkRecord): Promise<CheckResult> {
   try {
     const response = await request(link.url, 'HEAD');
@@ -33,14 +56,18 @@ async function checkLink(link: LinkRecord): Promise<CheckResult> {
     const finalResponse = [404, 405, 410].includes(response.status)
       ? await request(link.url, 'GET')
       : response;
-    return {
-      ...link,
-      status: finalResponse.status,
-      finalUrl: finalResponse.url,
-      note: finalResponse.status === 401 || finalResponse.status === 403 || finalResponse.status === 429
-        ? 'acesso restrito por login, limite ou proteção do provedor'
-        : undefined,
-    };
+
+    let status: number | 'network-error' = finalResponse.status;
+    let note = finalResponse.status === 401 || finalResponse.status === 403 || finalResponse.status === 429
+      ? 'acesso restrito por login, limite ou proteção do provedor'
+      : undefined;
+
+    if (isYouTubeUrl(link.url) && status < 400 && !(await youTubeIsAvailable(link.url))) {
+      status = 404;
+      note = 'vídeo/playlist do YouTube indisponível (removido, privado ou bloqueado)';
+    }
+
+    return { ...link, status, finalUrl: finalResponse.url, note };
   } catch (error) {
     return { ...link, status: 'network-error', note: error instanceof Error ? error.message : 'falha de rede' };
   }
