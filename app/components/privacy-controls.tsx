@@ -20,7 +20,9 @@ export function PrivacyControls() {
       anchor.href = url;
       anchor.download = `sectrilha-progresso-${new Date().toISOString().slice(0, 10)}.json`;
       anchor.click();
-      URL.revokeObjectURL(url);
+      // Defer revocation: revoking synchronously right after click() can cancel
+      // the download before the browser starts reading the blob.
+      setTimeout(() => URL.revokeObjectURL(url), 0);
       setMessage('Seu arquivo de progresso foi preparado.');
     } catch {
       setMessage('Não foi possível preparar a exportação. Tente novamente.');
