@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Menu, Shield } from 'lucide-react';
-import { ThemeSwitcher } from './theme-switcher';
 
 const links = [
   { href: '/', label: 'Início' },
@@ -27,7 +26,6 @@ export function SiteHeader() {
         <nav className="primary-nav" aria-label="Navegação principal">
           <NavigationLinks />
         </nav>
-        <ThemeSwitcher />
         <details className="mobile-nav">
           <summary aria-label="Abrir menu de navegação">
             <Menu aria-hidden="true" size={18} />
@@ -35,7 +33,6 @@ export function SiteHeader() {
           </summary>
           <nav className="mobile-nav-links" aria-label="Navegação principal móvel">
             <NavigationLinks />
-            <ThemeSwitcher />
           </nav>
         </details>
       </div>
