@@ -12,10 +12,12 @@ import {
 
 export type ThemeId =
   | 'original'
-  | 'tech-blue'
-  | 'electric-black'
-  | 'purple-cyan'
-  | 'green-hacker'
+  | 'sentinela-ciano'
+  | 'zero-trust-violeta'
+  | 'firewall-rubi'
+  | 'criptografia-esmeralda'
+  | 'grafite-ambar'
+  | 'azul-forense'
   | 'light-pro'
   | 'dark-minimal'
   | 'dark-premium';
@@ -23,15 +25,20 @@ export type ThemeId =
 export type ThemeOption = {
   id: ThemeId;
   label: string;
+  /** Cor principal (primary) da paleta, usada como amostra no seletor. */
   swatch: string;
 };
 
+// Ordem exibida no seletor. O `swatch` é a cor primária de cada paleta.
+// As cores completas de cada tema vivem em `app/globals.css` (blocos [data-theme]).
 export const THEMES: ThemeOption[] = [
   { id: 'original', label: 'Original (Padrão)', swatch: '#63df9b' },
-  { id: 'tech-blue', label: 'Azul Tecnológico', swatch: '#2563EB' },
-  { id: 'electric-black', label: 'Preto + Azul Elétrico', swatch: '#00A3FF' },
-  { id: 'purple-cyan', label: 'Roxo + Ciano', swatch: '#7C3AED' },
-  { id: 'green-hacker', label: 'Verde Hacker', swatch: '#00FF88' },
+  { id: 'sentinela-ciano', label: 'Sentinela Ciano', swatch: '#22D3EE' },
+  { id: 'zero-trust-violeta', label: 'Zero Trust Violeta', swatch: '#7C3AED' },
+  { id: 'firewall-rubi', label: 'Firewall Rubi', swatch: '#BE123C' },
+  { id: 'criptografia-esmeralda', label: 'Criptografia Esmeralda', swatch: '#047857' },
+  { id: 'grafite-ambar', label: 'Grafite Âmbar', swatch: '#F59E0B' },
+  { id: 'azul-forense', label: 'Azul Forense', swatch: '#2563EB' },
   { id: 'light-pro', label: 'Claro e Profissional', swatch: '#1D4ED8' },
   { id: 'dark-minimal', label: 'Dark Minimalista', swatch: '#6366F1' },
   { id: 'dark-premium', label: 'Dark Premium (Recomendado)', swatch: '#2563EB' },
@@ -54,6 +61,10 @@ function isThemeId(value: string | null): value is ThemeId {
 
 function applyThemeAttribute(id: ThemeId) {
   document.documentElement.setAttribute('data-theme', id);
+  // Mantém o chrome do navegador (barra de status mobile) na cor do tema.
+  const background = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+  const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+  if (background && themeColorMeta) themeColorMeta.setAttribute('content', background);
 }
 
 export function ThemeProvider({ children }: Readonly<{ children: ReactNode }>) {

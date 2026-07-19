@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark; /* scrollbars/controles nativos; o tema claro sobrescreve */
   --bg: #07120f;
   --surface: #0d1a16;
   --surface-elevated: #11231c;
@@ -24,6 +25,54 @@
   --danger-border: color-mix(in srgb, var(--danger), var(--bg) 35%);
   --danger-text: color-mix(in srgb, var(--danger) 75%, var(--text));
   --brand-on: #052014;
+
+  /*
+   * Papéis semânticos por tema (design tokens).
+   * Mapeamento função -> variável usado em todo o site:
+   *   background        -> --bg
+   *   backgroundSecondary / surface -> --surface
+   *   surfaceHover      -> --surface-elevated
+   *   border            -> --line
+   *   textPrimary       -> --text
+   *   textSecondary     -> --muted
+   *   primary           -> --brand        (texto sobre primary: --brand-on)
+   *   primaryHover / link -> --brand-strong
+   *   secondary         -> --secondary
+   *   accent            -> --accent
+   *   success           -> --success       (texto sobre success: --success-on)
+   *   info              -> --info
+   *   warning           -> --warning
+   *   danger            -> --danger
+   * Cada bloco [data-theme] abaixo redefine as cores-base; as variações
+   * derivadas (tint/border/text/glow) recalculam automaticamente por tema.
+   */
+  --secondary: #a7f2c8;
+  --accent: #63df9b;
+  --success: #63df9b;
+  --info: #63df9b;
+  --success-on: var(--bg);
+  --success-tint: color-mix(in srgb, var(--success) 14%, var(--bg));
+  --success-border: color-mix(in srgb, var(--success), var(--bg) 40%);
+  --success-text: color-mix(in srgb, var(--success) 72%, var(--text));
+  --info-tint: color-mix(in srgb, var(--info) 14%, var(--bg));
+  --info-border: color-mix(in srgb, var(--info), var(--bg) 40%);
+  --info-text: color-mix(in srgb, var(--info) 72%, var(--text));
+
+  /* Anel de foco (teclado). Temas claros sobrescrevem para manter visibilidade. */
+  --focus-ring: #f7dc88;
+
+  /*
+   * Tokens de movimento — mesma filosofia dos tokens de cor.
+   * Use sempre estas variáveis em transitions/animations novas;
+   * o bloco prefers-reduced-motion neutraliza tudo de uma vez.
+   */
+  --dur-fast: 140ms;   /* micro-interações: hover, foco */
+  --dur-base: 240ms;   /* transições padrão: header, sublinhado do nav */
+  --dur-slow: 420ms;   /* entradas de seção: hero */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);     /* desacelera no fim (entradas) */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);  /* neutro (estados) */
+  /* Brilho discreto para hover (mais fraco que --glow, que é usado no fundo). */
+  --glow-soft: color-mix(in srgb, var(--brand) 12%, transparent);
 }
 
 * { box-sizing: border-box; }
@@ -40,33 +89,45 @@ a { color: inherit; }
 button, input, select { font: inherit; }
 button, select, input[type="checkbox"] { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
-:focus-visible { outline: 3px solid #f7dc88; outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 
 .skip-link { position: fixed; z-index: 100; top: 0.6rem; left: 0.6rem; transform: translateY(-180%); background: #fff; color: #07120f; padding: 0.7rem 0.9rem; border-radius: 0.45rem; font-weight: 800; }
 .skip-link:focus { transform: translateY(0); }
-.site-header { position: sticky; z-index: 20; top: 0; border-bottom: 1px solid color-mix(in srgb, var(--line), transparent 20%); background: color-mix(in srgb, var(--bg) 96%, transparent); }
+/* Header ciente de scroll: translúcido no topo, solidifica com blur ao rolar. */
+.site-header { position: sticky; z-index: 20; top: 0; border-bottom: 1px solid transparent; background: color-mix(in srgb, var(--bg) 92%, transparent); transition: background var(--dur-base) var(--ease-standard), border-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard); }
+.site-header[data-scrolled] { border-bottom-color: color-mix(in srgb, var(--line), transparent 35%); background: color-mix(in srgb, var(--bg) 88%, transparent); box-shadow: 0 0.25rem 0.9rem #0000001f; }
+/* Blur atrás do header quando disponível (permite fundo mais translúcido). */
+@supports (backdrop-filter: blur(10px)) {
+  .site-header { background: color-mix(in srgb, var(--bg) 45%, transparent); backdrop-filter: blur(10px); }
+}
 .site-header-inner, .site-footer { width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .site-header-inner { min-height: 4.5rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--text); font-weight: 800; text-decoration: none; letter-spacing: -0.02em; }
 .brand-mark { display: grid; place-items: center; width: 2.15rem; height: 2.15rem; border: 1px solid var(--brand-border-weak); border-radius: 0.6rem; color: var(--brand); background: var(--brand-tint); }
 .primary-nav { display: flex; flex-wrap: wrap; gap: clamp(0.7rem, 2vw, 1.3rem); font-size: 0.92rem; }
-.primary-nav a { color: var(--muted); text-decoration: none; }
+.primary-nav a { position: relative; padding: 0.35rem 0; color: var(--muted); text-decoration: none; transition: color var(--dur-fast) var(--ease-standard); }
+/* Sublinhado discreto: surge do centro com fade (hover) e permanece no item atual. */
+.primary-nav a::after { content: ''; position: absolute; right: 0; bottom: 0; left: 0; height: 2px; border-radius: 999px; background: var(--brand); opacity: 0; transform: scaleX(0.55); transform-origin: center; transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out); }
 .primary-nav a:hover { color: var(--brand-strong); }
+.primary-nav a:hover::after { opacity: 0.65; transform: scaleX(1); }
+.primary-nav a[aria-current="page"]::after { opacity: 1; transform: scaleX(1); }
+.primary-nav a[aria-current="page"] { color: var(--text); font-weight: 700; }
 .mobile-nav { display: none; position: relative; }
 .mobile-nav summary { display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.7rem; padding: 0.55rem 0.7rem; border: 1px solid var(--brand-border-weak); border-radius: 0.6rem; color: var(--brand-strong); background: var(--brand-tint); cursor: pointer; font-size: 0.9rem; font-weight: 800; list-style: none; }
 .mobile-nav summary::-webkit-details-marker { display: none; }
 .mobile-nav-links { position: absolute; top: calc(100% + 0.5rem); right: 0; display: grid; min-width: min(19rem, calc(100vw - 2rem)); padding: 0.45rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--surface-elevated); box-shadow: 0 1rem 2.6rem #0009; }
 .mobile-nav-links a { padding: 0.75rem; border-radius: 0.45rem; color: var(--text); text-decoration: none; }
 .mobile-nav-links a:hover { color: var(--brand-strong); background: var(--brand-tint); }
+.mobile-nav-links a[aria-current="page"] { color: var(--brand-text); background: var(--brand-tint); font-weight: 800; box-shadow: inset 2px 0 0 var(--brand); }
 .theme-fab-wrap { position: fixed; z-index: 90; right: clamp(1rem, 3vw, 2rem); bottom: clamp(1rem, 3vw, 2rem); }
-.theme-fab { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border: 1px solid var(--brand-border-weak); border-radius: 999px; color: var(--brand); background: var(--surface-elevated); box-shadow: 0 0.6rem 1.8rem #0007; transition: color 150ms ease, border-color 150ms ease, transform 150ms ease; }
-.theme-fab:hover { color: var(--brand-strong); border-color: var(--brand); transform: translateY(-2px); }
+.theme-fab { display: inline-flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border: 1px solid var(--brand-border-weak); border-radius: 999px; color: var(--brand); background: var(--surface-elevated); box-shadow: 0 0.5rem 1.4rem #0005; transition: color var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard); }
+.theme-fab:hover { color: var(--brand-strong); border-color: var(--brand); transform: translateY(-1px); }
 .theme-fab-panel { position: absolute; right: 0; bottom: calc(100% + 0.6rem); width: min(19rem, calc(100vw - 2rem)); padding: 0.6rem; border: 1px solid var(--line); border-radius: 0.9rem; background: var(--surface); box-shadow: 0 1rem 2.6rem #0009; }
 .theme-fab-title { margin: 0.2rem 0.45rem 0.55rem; color: var(--muted); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
 .theme-fab-options { display: grid; gap: 0.1rem; margin: 0; padding: 0; border: 0; min-inline-size: auto; }
-.theme-option { position: relative; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.5rem; border-radius: 0.5rem; color: var(--text); font-size: 0.9rem; font-weight: 650; cursor: pointer; }
+.theme-option { position: relative; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.5rem; border-radius: 0.5rem; color: var(--text); font-size: 0.9rem; font-weight: 650; cursor: pointer; transition: background var(--dur-fast) var(--ease-standard); }
 .theme-option:hover { background: var(--brand-tint); }
-.theme-option:has(:focus-visible) { outline: 3px solid #f7dc88; outline-offset: 2px; }
+.theme-option:has(:focus-visible) { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
 .theme-option input { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
 .theme-swatch { flex: 0 0 auto; width: 1.15rem; height: 1.15rem; border: 1px solid color-mix(in srgb, var(--text) 25%, transparent); border-radius: 50%; }
 .theme-check { margin-left: auto; color: var(--brand); }
@@ -81,14 +142,57 @@ h2 { margin: 0; font-size: clamp(1.65rem, 4vw, 2.8rem); }
 h3 { margin: 0; font-size: 1.15rem; }
 .hero-description { max-width: 60ch; margin: 1.55rem 0 0; color: var(--muted); font-size: 1.1rem; }
 .button-row { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.85rem; padding: 0.7rem 1rem; border: 1px solid transparent; border-radius: 0.65rem; font-weight: 800; text-decoration: none; transition: transform 150ms ease, background 150ms ease; }
-.button:hover { transform: translateY(-2px); }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 2.85rem; padding: 0.7rem 1rem; border: 1px solid transparent; border-radius: 0.65rem; font-weight: 800; text-decoration: none; transition: transform var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard), border-color var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard); }
+.button:hover { transform: translateY(-1px); }
+.button:active { transform: translateY(0); } /* tato: o clique "assenta" o botão */
 .button-primary { background: var(--brand); color: var(--brand-on); }
-.button-primary:hover { background: var(--brand-strong); }
+.button-primary:hover { background: var(--brand-strong); box-shadow: 0 0.35rem 0.9rem var(--glow-soft); }
 .button-secondary { border-color: var(--brand-border-weak); color: var(--text); background: var(--brand-tint); }
 .button-tertiary { border-color: var(--line); color: var(--brand-strong); background: transparent; }
 .hero-panel, .panel { border: 1px solid var(--line); border-radius: 1rem; background: linear-gradient(160deg, color-mix(in srgb, var(--surface-elevated), transparent 5%), var(--surface)); box-shadow: 0 1rem 3rem #00000025; }
 .hero-panel { padding: 1.25rem; }
+
+/* Entrada do hero (home): fade + leve subida, escalonada. Roda uma vez.
+ * Opt-in via no-preference: com reduced-motion o hero fica 100% estático. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > *, .hero-panel { animation: rise-in var(--dur-slow) var(--ease-out) both; }
+  .hero-copy > :nth-child(2) { animation-delay: 60ms; }
+  .hero-copy > :nth-child(3) { animation-delay: 120ms; }
+  .hero-copy > :nth-child(4) { animation-delay: 180ms; }
+  .hero-panel { animation-delay: 240ms; }
+}
+@keyframes rise-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* ------------------------------------------------------------------
+ * Linguagem de movimento do site — "telemetria silenciosa".
+ * Conteúdo entra em operação como num painel de monitoramento:
+ * fades curtos, deslocamentos de poucos px, nada pisca ou glitcha.
+ * Tudo aqui é opt-in via no-preference; com reduced-motion o site
+ * é 100% estático. Sem JavaScript, nada fica escondido.
+ * ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Troca de rota: o miolo da página assenta com um fade discreto. */
+  .page-shell { animation: page-in var(--dur-slow) var(--ease-out) both; }
+
+  /* Revelação ao rolar (classes aplicadas pelo ScrollReveal, apenas
+   * abaixo da dobra). O delay de lote é definido inline pelo JS.
+   * Animação em vez de transition de propósito: elementos como
+   * .card-link e .checkpoint-item têm `transition` própria mais
+   * adiante na cascata, que sobrescreveria a da revelação. */
+  .reveal-pending { opacity: 0; }
+  .reveal-in { animation: reveal-rise var(--dur-slow) var(--ease-out) both; }
+
+  /* Overlays (painel de temas, menu móvel) abrem como um console. */
+  .theme-fab-panel, .mobile-nav-links { animation: pop-in var(--dur-fast) var(--ease-out) both; }
+
+  /* Ping de radar no escudo do logo — um aceno de sonar, uma vez por hover. */
+  .brand:hover .brand-mark, .brand:focus-visible .brand-mark { animation: ping-ring 600ms var(--ease-out); }
+}
+@keyframes page-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(4px) scale(0.98); } }
+@keyframes ping-ring { from { box-shadow: 0 0 0 0 var(--glow); } to { box-shadow: 0 0 0 0.6rem transparent; } }
+@keyframes reveal-rise { from { opacity: 0; transform: translateY(8px); } }
+
 .feature-line { display: flex; gap: 0.75rem; align-items: flex-start; padding: 1rem 0.4rem; color: var(--muted); }
 .feature-line + .feature-line { border-top: 1px solid var(--line); }
 .feature-line svg { margin-top: 0.16rem; flex: 0 0 auto; color: var(--brand); }
@@ -103,14 +207,14 @@ h3 { margin: 0; font-size: 1.15rem; }
 .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .card { display: flex; flex-direction: column; gap: 0.8rem; min-height: 100%; padding: 1.25rem; border: 1px solid var(--line); border-radius: 0.9rem; background: var(--surface); }
 .card p { margin: 0; color: var(--muted); }
-.card-link { text-decoration: none; transition: border-color 150ms ease, transform 150ms ease; }
-.card-link:hover { border-color: var(--brand); transform: translateY(-2px); }
+.card-link { text-decoration: none; transition: border-color var(--dur-fast) var(--ease-standard), transform var(--dur-fast) var(--ease-standard), box-shadow var(--dur-fast) var(--ease-standard); }
+.card-link:hover { border-color: var(--brand-border-weak); transform: translateY(-1px); box-shadow: 0 0.45rem 1.1rem var(--glow-soft); }
 .muted { color: var(--muted); }
 .meta { color: var(--muted); font-size: 0.88rem; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .tag { display: inline-flex; align-items: center; min-height: 1.7rem; padding: 0.15rem 0.52rem; border: 1px solid var(--brand-border-weak); border-radius: 999px; color: var(--brand-text); background: var(--brand-tint); font-size: 0.76rem; font-weight: 700; }
 .card-spacer { flex: 1 1 auto; }
-.inline-link, .back-link { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--brand-strong); font-size: 0.9rem; font-weight: 800; text-decoration: none; }
+.inline-link, .back-link { display: inline-flex; width: fit-content; max-width: 100%; align-items: center; gap: 0.35rem; color: var(--brand-strong); font-size: 0.9rem; font-weight: 800; text-decoration: none; }
 .inline-link:hover, .back-link:hover { color: var(--text); text-decoration: underline; }
 .back-link { margin-bottom: 1.4rem; color: var(--muted); }
 .level-number { display: inline-flex; align-items: center; width: fit-content; color: var(--brand); font-size: 0.78rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -119,7 +223,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .level-details span { display: flex; align-items: center; gap: 0.38rem; }
 .level-progress-line { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.55rem; margin-top: 0.2rem; color: var(--brand-strong); font-size: 0.82rem; font-weight: 800; }
 .progress-track { height: 0.45rem; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--brand) 16%, var(--surface)); }
-.progress-track > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-strong)); transition: width 180ms ease; }
+.progress-track > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-strong)); transition: width var(--dur-slow) var(--ease-out); }
 
 .recommendation-card { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; margin: 2.4rem 0 4rem; padding: 1.35rem; }
 .recommendation-icon { display: grid; place-items: center; width: 3.1rem; height: 3.1rem; border-radius: 0.8rem; color: var(--brand-on); background: var(--brand); }
@@ -143,7 +247,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .tree-connector { position: absolute; top: 2.5rem; bottom: 0; left: 1.3rem; width: 2px; background: var(--line); }
 .tree-node:last-child .tree-connector { display: none; }
 .tree-node-icon { z-index: 1; display: grid; place-items: center; width: 2.6rem; height: 2.6rem; border: 2px solid var(--line-brand); border-radius: 50%; color: var(--muted); background: var(--surface); font-size: 0.9rem; font-weight: 900; }
-.tree-node.complete .tree-node-icon { border-color: var(--brand); color: var(--brand-on); background: var(--brand); }
+.tree-node.complete .tree-node-icon { border-color: var(--success); color: var(--success-on); background: var(--success); }
 .tree-node.current .tree-node-icon { border-color: var(--warning); color: var(--warning); box-shadow: 0 0 0 5px color-mix(in srgb, var(--warning) 9%, transparent); }
 .tree-node-body { padding: 0 0 2rem 0.65rem; }
 .tree-node-topline { display: flex; justify-content: space-between; gap: 1rem; }
@@ -158,7 +262,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .module-card { min-height: 13.5rem; }
 .module-icon, .certification-mini > svg { color: var(--brand); }
 .module-resource-list { display: grid; gap: 0.35rem; margin-top: 0.15rem; }
-.module-resource-list a { overflow: hidden; color: var(--brand-text); font-size: 0.86rem; font-weight: 700; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.module-resource-list a { width: fit-content; max-width: 100%; overflow: hidden; color: var(--brand-text); font-size: 0.86rem; font-weight: 700; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
 .module-resource-list a::before { content: '↳ '; color: var(--brand); }
 .module-resource-list a:hover { color: var(--text); text-decoration: underline; }
 .module-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: auto; padding-top: 0.3rem; }
@@ -173,14 +277,14 @@ h3 { margin: 0; font-size: 1.15rem; }
 
 .checkpoint-section { margin-top: 3.5rem; }
 .compact-heading { margin-top: 0; }
-.sync-badge { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2rem; padding: 0.3rem 0.55rem; border: 1px solid var(--brand-border-weak); border-radius: 999px; color: var(--brand-text); background: var(--brand-tint); font-size: 0.78rem; font-weight: 700; }
+.sync-badge { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 2rem; padding: 0.3rem 0.55rem; border: 1px solid var(--info-border); border-radius: 999px; color: var(--info-text); background: var(--info-tint); font-size: 0.78rem; font-weight: 700; }
 .checkpoint-list { display: grid; gap: 0.7rem; margin: 1.2rem 0 0; padding: 0; list-style: none; }
-.checkpoint-item { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem; align-items: flex-start; padding: 1rem; border: 1px solid var(--line); border-radius: 0.8rem; background: var(--surface); }
-.checkpoint-item.checked { border-color: var(--brand-border-weak); background: var(--brand-tint); }
-.checkpoint-item input { width: 1.15rem; height: 1.15rem; margin-top: 0.15rem; accent-color: var(--brand); }
+.checkpoint-item { display: grid; grid-template-columns: auto 1fr; gap: 0.8rem; align-items: flex-start; padding: 1rem; border: 1px solid var(--line); border-radius: 0.8rem; background: var(--surface); transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard); }
+.checkpoint-item.checked { border-color: var(--success-border); background: var(--success-tint); }
+.checkpoint-item input { width: 1.15rem; height: 1.15rem; margin-top: 0.15rem; accent-color: var(--success); }
 .checkpoint-item label { display: grid; gap: 0.18rem; color: var(--muted); cursor: pointer; }
 .checkpoint-title { display: flex; align-items: center; gap: 0.35rem; color: var(--text); font-weight: 800; }
-.checkpoint-item.checked .checkpoint-title svg { color: var(--brand); }
+.checkpoint-item.checked .checkpoint-title svg { color: var(--success); }
 .spin { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -195,7 +299,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .resource-filter-bar .filter-label { flex: 1 1 100%; margin-right: 0; }
 .resource-search-field { flex: 1 1 17rem; }
 .search-control { display: flex; align-items: center; gap: 0.45rem; min-height: 2.55rem; padding: 0 0.65rem; border: 1px solid var(--line); border-radius: 0.52rem; color: var(--muted); background: var(--surface); }
-.search-control:focus-within { outline: 3px solid #f7dc88; outline-offset: 3px; }
+.search-control:focus-within { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 .search-control input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--text); background: transparent; }
 .search-control input::placeholder { color: var(--muted); }
 .resource-empty-state { max-width: 42rem; }
@@ -215,7 +319,7 @@ tbody th span { display: block; margin-top: 0.15rem; color: var(--muted); font-s
 .explore-specializations p:not(.eyebrow) { color: var(--muted); }
 .explore-specializations > .button { grid-column: 1 / -1; justify-self: start; }
 .specialization-link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
-.specialization-link-grid a { display: flex; align-items: center; gap: 0.45rem; min-height: 3rem; padding: 0.6rem; border: 1px solid var(--brand-border-weak); border-radius: 0.65rem; color: var(--brand-text); background: var(--brand-tint); font-size: 0.86rem; font-weight: 750; text-decoration: none; }
+.specialization-link-grid a { display: flex; align-items: center; gap: 0.45rem; min-height: 3rem; padding: 0.6rem; border: 1px solid var(--brand-border-weak); border-radius: 0.65rem; color: var(--brand-text); background: var(--brand-tint); font-size: 0.86rem; font-weight: 750; text-decoration: none; transition: border-color var(--dur-fast) var(--ease-standard); }
 .specialization-link-grid a span { flex: 1; }
 .specialization-link-grid a:hover { border-color: var(--brand); }
 .specialization-panel { margin: 1.5rem 0 3rem; padding: clamp(1.2rem, 3vw, 2rem); }
@@ -224,7 +328,7 @@ tbody th span { display: block; margin-top: 0.15rem; color: var(--muted); font-s
 .skill-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.85rem 0.9rem; background: var(--surface); }
 .skill-row + .skill-row { border-top: 1px solid var(--line); }
 .skill-row div:first-child { display: grid; gap: 0.1rem; }.skill-row span { color: var(--muted); font-size: 0.83rem; }
-.skill-dots { display: flex; gap: 0.32rem; }.skill-dots span { width: 0.72rem; height: 0.72rem; border: 1px solid var(--line-brand); border-radius: 50%; background: transparent; }.skill-dots span.active { border-color: var(--brand); background: var(--brand); }
+.skill-dots { display: flex; gap: 0.32rem; }.skill-dots span { width: 0.72rem; height: 0.72rem; border: 1px solid var(--line-brand); border-radius: 50%; background: transparent; transition: border-color var(--dur-fast) var(--ease-standard), background var(--dur-fast) var(--ease-standard); }.skill-dots span.active { border-color: var(--brand); background: var(--brand); }
 .next-specialization-action { display: flex; align-items: center; gap: 0.7rem; margin-top: 1rem; padding: 0.8rem; border-radius: 0.65rem; color: var(--brand-text); background: var(--brand-tint); }.next-specialization-action > svg { color: var(--brand); flex: 0 0 auto; }.next-specialization-action div { flex: 1; }.next-specialization-action p { margin: 0; color: var(--muted); font-size: 0.86rem; }
 
 .credential-hero { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 1rem; align-items: center; padding: clamp(1.2rem, 3vw, 2rem); }.credential-hero > svg { color: var(--brand); }.credential-hero h1 { max-width: none; margin: 0; font-size: clamp(2rem, 5vw, 4rem); }.credential-hero p:not(.eyebrow) { margin: 0.35rem 0 0; color: var(--muted); }
@@ -262,41 +366,154 @@ tbody th span { display: block; margin-top: 0.15rem; color: var(--muted); font-s
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; animation-duration: 0.01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; }
 }
 
-[data-theme="tech-blue"] {
-  --bg: #0B1220; --surface: #141C2F; --surface-elevated: #1B2740; --line: #2B3A56;
-  --text: #F8FAFC; --muted: #94A3B8; --brand: #2563EB; --brand-strong: #38BDF8;
-  --warning: #f6c768; --danger: #F87171; --brand-on: #FFFFFF;
+/* ===================================================================
+ * TEMAS DE COR — fonte oficial dos HEX: sectrilha_paletas_de_cores.txt
+ * Cada bloco só redefine as cores-base; tints/borders/glow derivam no :root.
+ * Ordem no seletor: Original, Sentinela Ciano, Zero Trust Violeta,
+ * Firewall Rubi, Criptografia Esmeralda, Grafite Âmbar, Azul Forense,
+ * Claro e Profissional, Dark Minimalista, Dark Premium.
+ * =================================================================== */
+
+/* 2. Sentinela Ciano — tecnológico, confiável e moderno. */
+[data-theme="sentinela-ciano"] {
+  --bg: #07111F;              /* Núcleo Noturno — fundo principal */
+  --surface: #0D1B2A;         /* Painel Seguro — cards, menus, painéis */
+  --surface-elevated: #12263A;
+  --line: #223A54;
+  --text: #F8FAFC;            /* Texto Neve — texto principal */
+  --muted: #94A3B8;           /* Dados Inativos — texto secundário */
+  --brand: #22D3EE;           /* Pulso Cibernético — primary */
+  --brand-strong: #38BDF8;    /* Protocolo Azul — hover/links */
+  --brand-on: #07111F;        /* texto escuro sobre botão ciano */
+  --secondary: #38BDF8;       /* Protocolo Azul */
+  --accent: #38BDF8;          /* Protocolo Azul — detalhes */
+  --success: #A3E635;         /* Código Ativo — progresso/sucesso */
+  --info: #38BDF8;            /* Protocolo Azul — informações */
+  --warning: #FBBF24;         /* derivado (paleta sem amarelo) */
+  --danger: #F87171;          /* derivado (paleta sem vermelho) */
 }
-[data-theme="electric-black"] {
-  --bg: #050816; --surface: #111827; --surface-elevated: #1A2333; --line: #243244;
-  --text: #FFFFFF; --muted: #94A3B8; --brand: #00A3FF; --brand-strong: #38BDF8;
-  --warning: #f6c768; --danger: #ff8e86; --brand-on: #04121A;
+
+/* 3. Zero Trust Violeta — futurista, IA e identidade. */
+[data-theme="zero-trust-violeta"] {
+  --bg: #0B0914;              /* Vazio Criptografado */
+  --surface: #171126;         /* Camada Zero Trust */
+  --surface-elevated: #201834;
+  --line: #2E2547;
+  --text: #F5F3FF;            /* Luz Protegida */
+  --muted: #B8B3C7;           /* Sinal Secundário */
+  --brand: #7C3AED;           /* Acesso Violeta — primary */
+  --brand-strong: #8B5CF6;    /* hover/links (contraste com texto claro) */
+  --brand-on: #FFFFFF;        /* texto claro sobre botão violeta */
+  --secondary: #A78BFA;       /* Identidade Neural */
+  --accent: #22D3EE;          /* Fluxo Digital */
+  --success: #34D399;         /* derivado (verde) */
+  --info: #22D3EE;            /* Fluxo Digital — links/indicadores */
+  --warning: #FBBF24;         /* derivado */
+  --danger: #F87171;          /* Ameaça Detectada */
 }
-[data-theme="purple-cyan"] {
-  --bg: #0F172A; --surface: #1E1B2E; --surface-elevated: #271F3D; --line: #3B2F55;
-  --text: #F8FAFC; --muted: #A1A1C2; --brand: #7C3AED; --brand-strong: #A855F7;
-  --warning: #f6c768; --danger: #ff8e86; --brand-on: #FFFFFF;
+
+/* 4. Firewall Rubi — resposta a incidentes, SOC e pentest. */
+[data-theme="firewall-rubi"] {
+  --bg: #0B0D12;              /* BlackBox */
+  --surface: #151922;         /* Central de Operações */
+  --surface-elevated: #1E232F;
+  --line: #2A303C;
+  --text: #F8FAFC;            /* Interface Clara */
+  --muted: #A1A1AA;           /* Log Desativado */
+  --brand: #BE123C;           /* Firewall Rubi — primary */
+  --brand-strong: #F43F5E;    /* hover/links (contraste com texto claro) */
+  --brand-on: #FFFFFF;        /* texto claro sobre botão rubi */
+  --secondary: #FB7185;       /* Sinal de Ataque */
+  --accent: #38BDF8;          /* Radar Azul */
+  --success: #22C55E;         /* derivado (verde, mantém vermelho reservado) */
+  --info: #38BDF8;            /* Radar Azul — informações/links */
+  --warning: #F59E0B;         /* Alerta Âmbar */
+  --danger: #FB7185;          /* Sinal de Ataque — alerta/ameaça */
 }
-[data-theme="green-hacker"] {
-  --bg: #050A07; --surface: #0F1A14; --surface-elevated: #132217; --line: #1D3324;
-  --text: #A7F3D0; --muted: #6B7280; --brand: #00FF88; --brand-strong: #33FFA1;
-  --warning: #f6c768; --danger: #ff8e86; --brand-on: #052014;
+
+/* 5. Criptografia Esmeralda — terminal, Linux, redes. */
+[data-theme="criptografia-esmeralda"] {
+  --bg: #06130F;              /* Terminal Profundo */
+  --surface: #0D211A;         /* Camada Criptografada */
+  --surface-elevated: #123026;
+  --line: #1C3B2E;
+  --text: #ECFDF5;            /* Texto Terminal */
+  --muted: #A7C8BC;           /* Registro Secundário */
+  --brand: #047857;           /* Chave Esmeralda — primary */
+  --brand-strong: #059669;    /* hover/links (contraste com texto claro) */
+  --brand-on: #ECFDF5;        /* texto claro sobre botão verde-escuro */
+  --secondary: #2DD4BF;       /* Pacote Seguro */
+  --accent: #34D399;          /* Código Executado */
+  --success: #34D399;         /* Código Executado — progresso/sucesso */
+  --info: #2DD4BF;            /* Pacote Seguro — links/indicadores */
+  --warning: #FBBF24;         /* derivado */
+  --danger: #F87171;          /* Falha Crítica */
 }
+
+/* 6. Grafite Âmbar — operações, análise forense, risco. */
+[data-theme="grafite-ambar"] {
+  --bg: #0A0E13;              /* Base Grafite */
+  --surface: #141B22;         /* Aço Escuro */
+  --surface-elevated: #1C242D;
+  --line: #28313B;
+  --text: #F8FAFC;            /* Branco Operacional */
+  --muted: #94A3B8;           /* Cinza de Log */
+  --brand: #F59E0B;           /* Âmbar Tático — primary */
+  --brand-strong: #FBBF24;    /* Ouro de Alerta — hover/links */
+  --brand-on: #0A0E13;        /* texto escuro sobre botão âmbar */
+  --secondary: #FBBF24;       /* Ouro de Alerta */
+  --accent: #38BDF8;          /* Pulso Forense */
+  --success: #22C55E;         /* Status Seguro */
+  --info: #38BDF8;            /* Pulso Forense — informações/links */
+  --warning: #FBBF24;         /* Ouro de Alerta */
+  --danger: #F87171;          /* derivado (paleta sem vermelho) */
+}
+
+/* 7. Azul Forense — telemetria, Blue Team, investigação. */
+[data-theme="azul-forense"] {
+  --bg: #08121C;              /* Abismo Digital */
+  --surface: #102234;         /* Painel Analítico */
+  --surface-elevated: #163049;
+  --line: #1F3A54;
+  --text: #E2E8F0;            /* Branco de Console */
+  --muted: #94A3B8;           /* Cinza de Diagnóstico */
+  --brand: #2563EB;           /* Azul Forense — primary */
+  --brand-strong: #3B82F6;    /* hover/links (contraste com texto claro) */
+  --brand-on: #FFFFFF;        /* texto claro sobre botão azul */
+  --secondary: #60A5FA;       /* Sinal de Telemetria */
+  --accent: #22D3EE;          /* Ciano de Rede */
+  --success: #22C55E;         /* derivado (verde) */
+  --info: #22D3EE;            /* Ciano de Rede — indicadores/links */
+  --warning: #FBBF24;         /* derivado */
+  --danger: #FB7185;          /* Evento Crítico */
+}
+
+/* 8. Claro e Profissional — único tema claro (reinserido).
+ * brand-strong/link escurecido de #0891B2 -> #0E7490 para legibilidade sobre branco. */
 [data-theme="light-pro"] {
+  color-scheme: light;
   --bg: #F8FAFC; --surface: #FFFFFF; --surface-elevated: #F1F5F9; --line: #E2E8F0;
-  --text: #0F172A; --muted: #64748B; --brand: #1D4ED8; --brand-strong: #0891B2;
-  --warning: #B45309; --danger: #DC2626; --brand-on: #FFFFFF;
+  --text: #0F172A; --muted: #64748B; --brand: #1D4ED8; --brand-strong: #0E7490; --brand-on: #FFFFFF;
+  --secondary: #0E7490; --accent: #2563EB; --success: #16A34A; --info: #0E7490;
+  --warning: #B45309; --danger: #DC2626;
+  --focus-ring: #B45309; /* âmbar-escuro: visível sobre fundo claro */
 }
+
+/* 9. Dark Minimalista (reinserido). */
 [data-theme="dark-minimal"] {
   --bg: #0A0D14; --surface: #121722; --surface-elevated: #1A2130; --line: #242C3D;
-  --text: #E5E7EB; --muted: #9CA3AF; --brand: #6366F1; --brand-strong: #A786FA;
-  --warning: #f6c768; --danger: #ff8e86; --brand-on: #FFFFFF;
+  --text: #E5E7EB; --muted: #9CA3AF; --brand: #6366F1; --brand-strong: #A786FA; --brand-on: #FFFFFF;
+  --secondary: #A786FA; --accent: #818CF8; --success: #22C55E; --info: #38BDF8;
+  --warning: #F6C768; --danger: #FF8E86;
 }
+
+/* 10. Dark Premium (Recomendado) (reinserido). */
 [data-theme="dark-premium"] {
   --bg: #0A0F1F; --surface: #151B2D; --surface-elevated: #1D2540; --line: #2A3350;
-  --text: #F8FAFC; --muted: #94A3B8; --brand: #2563EB; --brand-strong: #38B2F6;
-  --warning: #f6c768; --danger: #ff8e86; --brand-on: #FFFFFF;
+  --text: #F8FAFC; --muted: #94A3B8; --brand: #2563EB; --brand-strong: #38B2F6; --brand-on: #FFFFFF;
+  --secondary: #38B2F6; --accent: #60A5FA; --success: #22C55E; --info: #38BDF8;
+  --warning: #F6C768; --danger: #FF8E86;
 }
