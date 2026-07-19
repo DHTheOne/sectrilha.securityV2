@@ -172,13 +172,13 @@ const resources: CurriculumResource[] = [
     type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 1, levelIds: ['level-0'], specializationIds: [], tags: ['linux', 'terminal', 'comandos'],
   }),
   resource({
-    id: 'boson-linux-essentials', slug: 'boson-linux-essentials', title: 'Linux Essentials',
-    description: 'Playlist em português para aprender Linux e operações de terminal desde o início.', provider: 'Bóson Treinamentos', url: 'https://www.youtube.com/playlist?list=PLucm8g_ez1Nq5b-240-O2y8o_0F1HjQfG',
-    type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 18, levelIds: ['level-0'], specializationIds: [], tags: ['linux', 'terminal', 'sistemas-operacionais'],
+    id: 'boson-linux-essentials', slug: 'boson-linux-essentials', title: 'Curso de Linux Básico (LPIC-1)',
+    description: 'Playlist em português com fundamentos de Linux e linha de comando, alinhada à certificação LPIC-1.', provider: 'Bóson Treinamentos', url: 'https://www.youtube.com/playlist?list=PLucm8g_ezqNp92MmkF9p_cj4yhT-fCTl7',
+    type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 20, levelIds: ['level-0'], specializationIds: [], tags: ['linux', 'terminal', 'sistemas-operacionais'],
   }),
   resource({
-    id: 'boson-shell-scripting', slug: 'boson-shell-scripting', title: 'Shell Script',
-    description: 'Playlist em português para automatizar tarefas básicas de laboratório com Shell Script.', provider: 'Bóson Treinamentos', url: 'https://www.youtube.com/playlist?list=PL711317540D1D23A0',
+    id: 'boson-shell-scripting', slug: 'boson-shell-scripting', title: 'Curso de Shell Script com Bash',
+    description: 'Playlist em português para automatizar tarefas do laboratório com Shell Script e Bash.', provider: 'Cavalcante Treinamentos', url: 'https://www.youtube.com/playlist?list=PLQ7gVTPc8Kmir1ndvWklQvkTcf1hPoHCl',
     type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 12, levelIds: ['level-0'], specializationIds: [], tags: ['linux', 'shell', 'automação'],
   }),
   resource({
@@ -212,9 +212,9 @@ const resources: CurriculumResource[] = [
     type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 1, levelIds: ['level-1'], specializationIds: [], tags: ['criptografia', 'segurança', 'fundamentos'],
   }),
   resource({
-    id: 'boson-criptografia', slug: 'boson-criptografia-seguranca', title: 'Criptografia e segurança',
-    description: 'Playlist em português sobre criptografia e conceitos de segurança da informação.', provider: 'Bóson Treinamentos', url: 'https://www.youtube.com/playlist?list=PLucm8g_ezqNqK-B91r-w1uJ7N_Z7-XvS7',
-    type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 10, levelIds: ['level-1'], specializationIds: [], tags: ['criptografia', 'segurança', 'fundamentos'],
+    id: 'boson-criptografia', slug: 'boson-criptografia-seguranca', title: 'Segurança e Criptografia',
+    description: 'Playlist em português sobre segurança e criptografia, com fundamentos técnicos explicados a fundo.', provider: 'Fábio Akita', url: 'https://www.youtube.com/playlist?list=PLdsnXVqbHDUesbvzAORxf6iKrYaHqu8S0',
+    type: 'video', access: 'free', collection: 'legacy', languages: ['pt-BR'], estimatedHours: 8, levelIds: ['level-1'], specializationIds: [], tags: ['criptografia', 'segurança', 'fundamentos'],
   }),
   resource({
     id: 'codigo-fonte-owasp', slug: 'codigo-fonte-tv-owasp-top-10', title: 'OWASP Top 10',

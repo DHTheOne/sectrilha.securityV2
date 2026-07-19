@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { OfflineServiceWorker } from './components/offline-service-worker';
 import { SiteFooter } from './components/site-footer';
 import { SiteHeader } from './components/site-header';
+import { ThemeProvider } from './components/theme-provider';
+import { ThemeSwitcher } from './components/theme-switcher';
 import { SITE_URL } from '@/src/lib/site';
 import './globals.css';
 
@@ -39,11 +41,14 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
-        <OfflineServiceWorker />
-        <a className="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
-        <SiteHeader />
-        <main id="conteudo-principal">{children}</main>
-        <SiteFooter />
+        <ThemeProvider>
+          <OfflineServiceWorker />
+          <a className="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
+          <SiteHeader />
+          <main id="conteudo-principal">{children}</main>
+          <SiteFooter />
+          <ThemeSwitcher />
+        </ThemeProvider>
       </body>
     </html>
   );
