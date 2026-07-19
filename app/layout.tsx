@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { OfflineServiceWorker } from './components/offline-service-worker';
+import { ScrollReveal } from './components/scroll-reveal';
 import { SiteFooter } from './components/site-footer';
 import { SiteHeader } from './components/site-header';
 import { ThemeProvider } from './components/theme-provider';
@@ -37,12 +38,22 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
 };
 
+/**
+ * Aplica o tema salvo antes do primeiro paint (evita flash do tema padrão).
+ * Ids desconhecidos são inofensivos: nenhum bloco [data-theme] casa e o
+ * ThemeProvider normaliza o atributo logo após hidratar.
+ */
+const themeInitScript =
+  "try{var t=localStorage.getItem('sectrilha-theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}";
+
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           <OfflineServiceWorker />
+          <ScrollReveal />
           <a className="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
           <SiteHeader />
           <main id="conteudo-principal">{children}</main>

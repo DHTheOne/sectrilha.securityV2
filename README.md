@@ -2,6 +2,10 @@
 
 Plataforma educacional de cibersegurança com currículo estruturado, recursos curados e checkpoints offline-first.
 
+## Resumo do projeto
+
+A SecTrilha organiza uma jornada de aprendizagem em 6 níveis, 15 módulos e 27 checkpoints, complementada por 9 especializações, 13 certificações e 44 recursos curados — 23 deles disponíveis em português. Construída com Next.js, React e TypeScript, a plataforma gera páginas estáticas, oferece navegação responsiva e acessível e mantém o progresso exclusivamente no navegador por meio de IndexedDB, com suporte a exportação, exclusão e uso offline.
+
 ## Privacidade por padrão
 
 O MVP não tem cadastro, autenticação, IA, chat automático, analytics, pixels de publicidade ou sincronização com serviços externos. O progresso é salvo somente no navegador do estudante, via IndexedDB, e pode ser exportado ou apagado em `/privacy`.
