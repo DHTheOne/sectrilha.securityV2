@@ -23,7 +23,7 @@ export function LevelCardGrid({ levels }: Readonly<{ levels: readonly Curriculum
               <span><Award aria-hidden="true" size={15} /> {label(level.badge.label)}</span>
             </div>
             <div className="level-progress-line">
-              <div className="progress-track"><span style={{ width: `${progress.percent}%` }} /></div>
+              <div className="progress-track"><span style={{ transform: `scaleX(${progress.percent / 100})` }} /></div>
               <span>{isReady ? `${progress.percent}%` : 'Carregando…'}</span>
             </div>
           </Link>

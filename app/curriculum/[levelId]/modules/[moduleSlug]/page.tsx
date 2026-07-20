@@ -42,8 +42,13 @@ export default async function ModulePage({ params }: PageProps) {
           <p className="eyebrow">NÍVEL {level.order} · MÓDULO GUIADO</p>
           <h1 id="module-title">{label(module.title)}</h1>
           <p>{label(module.summary)}</p>
-          <div className="tag-row"><span className="tag">{module.estimatedHours} h estimadas</span>{module.skillIds.map((skill) => <span className="tag" key={skill}>{skill.replaceAll('-', ' ')}</span>)}</div>
-          <a className="button button-primary" href="#module-resources">Ver recursos para começar <ArrowRight aria-hidden="true" size={17} /></a>
+          <div className="tag-row">
+            <span className="tag">{module.estimatedHours} h estimadas</span>
+            {module.skillIds.map((skill) => <span className="tag" key={skill}>{skill.replaceAll('-', ' ')}</span>)}
+          </div>
+          <div className="button-row">
+            <a className="button button-primary" href="#module-resources">Ver recursos para começar <ArrowRight aria-hidden="true" size={17} /></a>
+          </div>
         </section>
 
         <section className="module-objectives panel" aria-labelledby="objectives-heading">
