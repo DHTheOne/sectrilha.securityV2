@@ -103,7 +103,8 @@ button:disabled { cursor: not-allowed; }
 .site-header-inner, .site-footer { width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .site-header-inner { min-height: 4.5rem; }
 .brand { display: inline-flex; align-items: center; gap: 0.6rem; color: var(--text); font-weight: 800; text-decoration: none; letter-spacing: -0.02em; }
-.brand-mark { display: grid; place-items: center; width: 2.15rem; height: 2.15rem; border: 1px solid var(--brand-border-weak); border-radius: 0.6rem; color: var(--brand); background: var(--brand-tint); }
+.brand-mark { position: relative; isolation: isolate; display: grid; place-items: center; width: 2.15rem; height: 2.15rem; border: 1px solid var(--brand-border-weak); border-radius: 0.6rem; color: var(--brand); background: var(--brand-tint); }
+.brand-mark::after { position: absolute; inset: -1px; border: 1px solid var(--brand); border-radius: inherit; content: ''; opacity: 0; pointer-events: none; transform: scale(0.9); }
 .primary-nav { display: flex; flex-wrap: wrap; gap: clamp(0.7rem, 2vw, 1.3rem); font-size: 0.92rem; }
 .primary-nav a { position: relative; padding: 0.35rem 0; color: var(--muted); text-decoration: none; transition: color var(--dur-fast) var(--ease-standard); }
 /* Sublinhado discreto: surge do centro com fade (hover) e permanece no item atual. */
@@ -186,12 +187,12 @@ h3 { margin: 0; font-size: 1.15rem; }
   .theme-fab-panel, .mobile-nav-links { animation: pop-in var(--dur-fast) var(--ease-out) both; }
 
   /* Ping de radar no escudo do logo — um aceno de sonar, uma vez por hover. */
-  .brand:hover .brand-mark, .brand:focus-visible .brand-mark { animation: ping-ring 600ms var(--ease-out); }
+  .brand:hover .brand-mark::after, .brand:focus-visible .brand-mark::after { animation: signal-ring 520ms var(--ease-out); }
 }
-@keyframes page-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes page-in { from { opacity: 0; transform: translateY(3px); } }
 @keyframes pop-in { from { opacity: 0; transform: translateY(4px) scale(0.98); } }
-@keyframes ping-ring { from { box-shadow: 0 0 0 0 var(--glow); } to { box-shadow: 0 0 0 0.6rem transparent; } }
-@keyframes reveal-rise { from { opacity: 0; transform: translateY(8px); } }
+@keyframes signal-ring { from { opacity: 0.55; transform: scale(0.9); } to { opacity: 0; transform: scale(1.38); } }
+@keyframes reveal-rise { from { opacity: 0; transform: translateY(6px); } }
 
 .feature-line { display: flex; gap: 0.75rem; align-items: flex-start; padding: 1rem 0.4rem; color: var(--muted); }
 .feature-line + .feature-line { border-top: 1px solid var(--line); }
@@ -223,7 +224,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .level-details span { display: flex; align-items: center; gap: 0.38rem; }
 .level-progress-line { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.55rem; margin-top: 0.2rem; color: var(--brand-strong); font-size: 0.82rem; font-weight: 800; }
 .progress-track { height: 0.45rem; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--brand) 16%, var(--surface)); }
-.progress-track > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-strong)); transition: width var(--dur-slow) var(--ease-out); }
+.progress-track > span { display: block; width: 100%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--brand), var(--brand-strong)); transform-origin: left center; transition: transform var(--dur-slow) var(--ease-out); }
 
 .recommendation-card { display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; margin: 2.4rem 0 4rem; padding: 1.35rem; }
 .recommendation-icon { display: grid; place-items: center; width: 3.1rem; height: 3.1rem; border-radius: 0.8rem; color: var(--brand-on); background: var(--brand); }
@@ -267,6 +268,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .module-resource-list a:hover { color: var(--text); text-decoration: underline; }
 .module-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: auto; padding-top: 0.3rem; }
 .resource-quick-card { min-height: 14rem; }
+.module-page #module-resources { scroll-margin-top: 5.5rem; }
 .module-objectives { margin: 2rem 0 3.5rem; padding: clamp(1.2rem, 3vw, 2rem); }
 .objective-list { display: grid; gap: 0.85rem; margin: 1rem 0 0; padding: 0; list-style: none; }
 .objective-list li { display: flex; align-items: flex-start; gap: 0.65rem; color: var(--brand-text); }
@@ -296,6 +298,7 @@ h3 { margin: 0; font-size: 1.15rem; }
 .resource-directory { margin: 0 0 2.2rem; }
 .resource-directory-card { min-height: 13.5rem; }
 .resource-directory-card h2 { font-size: 1.35rem; }
+.resource-directory-card .inline-link { margin-top: auto; }
 .resource-filter-bar .filter-label { flex: 1 1 100%; margin-right: 0; }
 .resource-search-field { flex: 1 1 17rem; }
 .search-control { display: flex; align-items: center; gap: 0.45rem; min-height: 2.55rem; padding: 0 0.65rem; border: 1px solid var(--line); border-radius: 0.52rem; color: var(--muted); background: var(--surface); }

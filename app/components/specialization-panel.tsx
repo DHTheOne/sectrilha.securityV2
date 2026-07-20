@@ -15,10 +15,13 @@ export function SpecializationPanel({ specialization, skills, checkpoints }: Rea
   const selectedSkills = specialization.skillTargets.map((target) => ({ target, skill: skills.find((skill) => skill.id === target.skillId) })).filter((item) => item.skill);
   const nextCheckpoint = specialization.checkpointIds.map((id) => checkpoints.find((checkpoint) => checkpoint.id === id)).find((checkpoint) => checkpoint && !completedCheckpointIds.has(checkpoint.id));
   const completeCount = specialization.checkpointIds.filter((id) => completedCheckpointIds.has(id)).length;
+  const progressPercent = specialization.checkpointIds.length
+    ? Math.round((completeCount / specialization.checkpointIds.length) * 100)
+    : 0;
 
   return (
     <section className="specialization-panel panel" aria-labelledby="skills-heading">
-      <div className="specialization-progress"><span>{completeCount}/{specialization.checkpointIds.length} checkpoints concluídos</span><div className="progress-track"><span style={{ width: `${specialization.checkpointIds.length ? Math.round((completeCount / specialization.checkpointIds.length) * 100) : 0}%` }} /></div></div>
+      <div className="specialization-progress"><span>{completeCount}/{specialization.checkpointIds.length} checkpoints concluídos</span><div className="progress-track"><span style={{ transform: `scaleX(${progressPercent / 100})` }} /></div></div>
       <h2 id="skills-heading">Matriz de skills</h2>
       <div className="skill-matrix">
         {selectedSkills.map(({ target, skill }) => skill && (

@@ -76,3 +76,16 @@ test('the mobile menu exposes the learning library without a hidden navigation p
   await page.getByRole('link', { name: 'Vídeos em PT' }).click();
   await expect(page.getByRole('heading', { name: 'Vídeos em português' })).toBeVisible();
 });
+
+test('resource shortcut calls to action align in the desktop grid', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/resources');
+
+  const actions = page.locator('.resource-directory-card .inline-link');
+  await expect(actions).toHaveCount(3);
+
+  const actionTops = await actions.evaluateAll((elements) =>
+    elements.map((element) => element.getBoundingClientRect().top),
+  );
+  expect(Math.max(...actionTops) - Math.min(...actionTops)).toBeLessThanOrEqual(1);
+});

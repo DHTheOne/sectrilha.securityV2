@@ -35,7 +35,7 @@ export function CurriculumTree({ levels }: Readonly<{ levels: readonly Curriculu
                 <h3>{label(level.title)}</h3>
                 <p>{label(level.summary)}</p>
                 <div className="progress-track" aria-label={`${progress.percent}% concluído`}>
-                  <span style={{ width: `${progress.percent}%` }} />
+                  <span style={{ transform: `scaleX(${progress.percent / 100})` }} />
                 </div>
                 <Link className="inline-link" href={`/curriculum/${level.slug}`}>
                   {isComplete ? 'Revisar nível' : isCurrent ? 'Continuar nível' : 'Ver nível'} <ArrowRight aria-hidden="true" size={15} />

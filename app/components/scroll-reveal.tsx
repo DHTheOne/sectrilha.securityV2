@@ -24,7 +24,19 @@ const REVEAL_SELECTOR = [
 ].join(', ');
 
 const BATCH_STAGGER_MS = 45;
-const MAX_STAGGER_STEPS = 5;
+const MAX_STAGGER_STEPS = 4;
+
+function getTopLevelCandidates(elements: HTMLElement[]) {
+  const candidates = new Set(elements);
+  return elements.filter((element) => {
+    let parent = element.parentElement;
+    while (parent) {
+      if (candidates.has(parent)) return false;
+      parent = parent.parentElement;
+    }
+    return true;
+  });
+}
 
 export function ScrollReveal() {
   const pathname = usePathname();
@@ -34,8 +46,9 @@ export function ScrollReveal() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const foldLine = window.innerHeight * 0.92;
-    const candidates = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR))
+    const belowFold = Array.from(document.querySelectorAll<HTMLElement>(REVEAL_SELECTOR))
       .filter((element) => element.getBoundingClientRect().top > foldLine);
+    const candidates = getTopLevelCandidates(belowFold);
     if (candidates.length === 0) return;
 
     let batch: HTMLElement[] = [];
@@ -57,6 +70,10 @@ export function ScrollReveal() {
           element.style.animationDelay = `${Math.min(index, MAX_STAGGER_STEPS) * BATCH_STAGGER_MS}ms`;
           element.classList.remove('reveal-pending');
           element.classList.add('reveal-in');
+          element.addEventListener('animationend', () => {
+            element.classList.remove('reveal-in');
+            element.style.removeProperty('animation-delay');
+          }, { once: true });
         });
         batch = [];
       });
@@ -71,7 +88,10 @@ export function ScrollReveal() {
       cancelAnimationFrame(frame);
       observer.disconnect();
       // Nunca deixar conteúdo escondido para trás (ex.: troca rápida de rota).
-      for (const element of candidates) element.classList.remove('reveal-pending');
+      for (const element of candidates) {
+        element.classList.remove('reveal-pending', 'reveal-in');
+        element.style.removeProperty('animation-delay');
+      }
     };
   }, [pathname]);
 
